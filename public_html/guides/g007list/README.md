@@ -1,4 +1,4 @@
-## Listビューの作成
+# Listビューの作成
 
 Listというコンポーネントは、その名の通り一覧を表示するためのコンポーネントです。
 
@@ -44,20 +44,21 @@ Listというコンポーネントは、その名の通り一覧を表示する�
        grouped: true
     });
 
-### やってみよう #06
+## やってみよう #06
 
 > ※ 直前のハンズオンがうまくいかなかった方のために、ここまでの結果を用意しています。
 > [こちらからダウンロードして](http://sencha.sunvisor.net/devlove/cl05.zip)
-> ドキュメントルートのeggディレクトリの最多に解凍してください。
+> ドキュメントルートのdevloveディレクトリの下に解凍してください。
 
-ドキュメントルートのeggディレクトリの最多に解凍してください。
+### Listビューの作成
+
 * app/view ディレクトリの下にList.jsファイルを作ります。
-* List.jsファイルに、Ext.Listを拡張してデータを表示するリストを作ります。
+* List.jsファイルに、`Ext.List`を継承してデータを表示するリストを作ります。
 
         Ext.define('ContactList.view.List', {
             extend: 'Ext.List',
 
-            alias: 'widget.contactlist',
+            xtype: 'contactlist',
 
             requires: [
                 'ContactList.store.Contacts'
@@ -66,26 +67,43 @@ Listというコンポーネントは、その名の通り一覧を表示する�
             config: {
                 title: '連絡先リスト',
                 store: 'Contacts',
-                itemTpl: '{name}'
+                itemTpl: '{last_name} {first_name}'
             }
         });
 
+* Storeを使うので、`requires`配列にStoreのクラス名を入れています。
+* `store` コンフィグにStoreの名前をセットするだけで、StoreとListをバインドできます。
+* `itemTpl` コンフィグにはListに表示する内容のテンプレートを設定します。
+  ここでは、`last_name` と `first_name` の二つのフィールドを表示しています。
 
 ### Mainビューの変更
 
-* タブの最初のitemsにContactList.view.Listを表示させます。
+* タブの最初のitemsにContactList.view.Listを表示させましょう。
 * タブの次のitemsは、このアプリについての説明を書きます。
+
+* app/view/Main.js をエディタで開きます。
+* requires 配列にある Ext.Video の行を削除して、
+  'ContactList.view.List'
+  にします。
+* configの中にある `items` 配列の一つ目の要素には、さきほど作ったListを表示させます。
+    * `xtype: 'contactlist'`
+    * `title: 'Contact'` - これはタブに表示されるタイトル
+    * `iconCls: 'list'` - これはタブに表示するアイコン
+* `items` 配列の二つ目の要素には、タイトルバーをつけるとともに、アプリケーションの紹介を記述します。
+    * `title: 'About'`
+    * `iconCls: 'info'`
+    * `items` タイトルバーを表示させます。
+    * `styleHtmlContent: true` 見た目を調整
+    * html ボディの内容をHTMLで設定
+* 出来上がったコードは次のようになります。
 
         Ext.define('ContactList.view.Main', {
             extend: 'Ext.tab.Panel',
-
-            alias: 'widget.main',
-
+            xtype: 'main',
             requires: [
                 'Ext.TitleBar',
                 'ContactList.view.List'
             ],
-
             config: {
                 tabBarPosition: 'bottom',
 
@@ -98,17 +116,20 @@ Listというコンポーネントは、その名の通り一覧を表示する�
                         title: 'About',
                         iconCls: 'info',
 
-                        styleHtmlContent: true,
-                        scrollable: true,
+                        items: [
+                            {
+                                docked: 'top',
+                                xtype: 'titlebar',
+                                title: 'DevLove関西'
+                            }
+                        ],
 
-                        items: {
-                            docked: 'top',
-                            xtype: 'titlebar',
-                            title: 'Inovation Egg'
-                        },
+                        styleHtmlContent: true,
 
                         html: [
-                            'このアプリは、Inovation Egg での Sencha Touch ハンズオン サンプルプログラムです。'
+                            'このアプリは',
+                            '<strong>DevLove関西</strong>',
+                            'でのサンプルアプリです'
                         ].join("")
                     }
                 ]
@@ -117,40 +138,74 @@ Listというコンポーネントは、その名の通り一覧を表示する�
 
 * 表示してみましょう。
 
+### Storeのロード
 
-### やってみよう #07
+app.jsのlaunchメソッドの最後に1行追加して、Storeをロードします。
 
-※ 直前のハンズオンがうまくいかなかった方のために、ここまでの結果を用意しています。
-[こちらからダウンロードして](http://preview.xenophy.com/xenophy/senchaug/egg/misc/cl07.zip)
-ドキュメントルートのeggディレクトリの下に解凍してください。
+    Ext.getStore('Contacts').load();
+
+表示してみましょう。
+
+### ソートとインデックスバー
+
+現在表示されているデータは、順番がでたらめです。
+これを五十音順にしてみましょう。
+
+## やってみよう #07
+
+> ※ 直前のハンズオンがうまくいかなかった方のために、ここまでの結果を用意しています。
+> [こちらからダウンロードして](http://sencha.sunvisor.net/devlove/cl06.zip)
+> ドキュメントルートのdevloveディレクトリの下に解凍してください。
+
+### Paging
+
+* これまで表示されていたデータは25件。本当は300件のデータがサーバー上にあります。
+* ListPagingプラグインを入れます。
+
+        plugins: [{
+            xclass: 'Ext.plugin.ListPaging',
+            autoPaging: true
+        }]
+
+* プラグインのクラスをrequires配列に追加します。
+
+        requires: [
+            'ContactList.store.Contacts',
+            'Ext.plugin.ListPaging' // 追加
+        ],
+
+* 表示させ、最後までスクロールしてみるとLoad More...と表示され、新しいレコードが読み込まれるようになります。
 
 ### storeのsorters
 
+* 並ぶ順序がバラバラなので並び替えます。
 * 並び替えをするには、ストアに`sorters`コンフィグを設定します。
 
         sorters: ['name_kana'],
 
-### indexBar
+* ローカルでソートしているので、まだ順序が正しくありません。
 
-* indexBarを表示させるには、Listに`indexBar`コンフィグを設定します。
+        remoteSort: true,
 
-        indexBar: true
+* 表示させて、正しい順序で動作することを確認しましょう。
 
-* さらにストアに`groupers`コンフィグを設定します。
+### グループ化
+
+* Modelにフィールドを追加します。
+
+        { name: 'initial', type: 'string' }
+
+* Listにgroupedコンフィグを設定します。
+
+        grouped: true,
+
+* ストアに`groupers`コンフィグを設定します。
 
         grouper: {
-            groupFn: function (record) {
-                return record.get('name_kana')[0];
-            }
+            property: 'initial'
         }
 
-* 英字しか表示されないので、日本語の文字を表示させます。
-
-        indexBar: {
-            letters: [
-                'あ','か','さ','た','な','は','ま','や','ら','わ'
-            ]
-        }
+* フリガナの頭文字ごとにグループ分けされたのがわかります。
 
 ### disclose
 
