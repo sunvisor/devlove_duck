@@ -1,99 +1,81 @@
-## Editビュー
+# データの編集
 
-### やってみよう #10
+作ったフォームを使ってデータの編集をしてみましょう。
 
-※ 直前のハンズオンがうまくいかなかった方のために、ここまでの結果を用意しています。
-[こちらからダウンロードして](http://preview.xenophy.com/xenophy/senchaug/egg/misc/cl10.zip)
-ドキュメントルートのeggディレクトリの下に解凍してください。
+* Detailビューが表示されている時に、「編集」ボタンをタップするとデータを編集できるようにします。
 
-Detailビューから「編集」ボタンが押された時、あるいはListビューから「新規」ボタンが押された時に表示するEditビューを作成します。
 
-        Ext.define('ContactList.view.Edit', {
-            extend: 'Ext.form.Panel',
+## やってみよう #11
 
-            requires: [
-                'Ext.form.FieldSet',
-                'Ext.field.DatePicker',
-                'Ext.field.Email'
-            ],
-            
-            alias: 'widget.contactedit',
+> ※ 直前のハンズオンがうまくいかなかった方のために、ここまでの結果を用意しています。
+> [こちらからダウンロードして](http://sencha.sunvisor.net/devlove/cl10.zip)
+> ドキュメントルートのdevloveディレクトリの下に解凍してください。
 
-            config: {
-                items: [{
-                    xtype: 'fieldset',
-                    items: [{
-                        xtype: 'textfield',
-                        label: '氏名',
-                        name: 'name'
-                    }, {
-                        xtype: 'textfield',
-                        label: 'ふりがな',
-                        name: 'name_kana'
-                    }]
-                }]
+### 手順
+
+* 編集／保存用のボタンをNaviビューに追加します。
+* 追加ボタン、編集ボタン、保存ボタンが状況に応じて表示されるようにコントロールします。
+
+### 編集用ボタンの追加
+
+* 次の二つのオブジェクトをnavigationBarのitemsに追加します。
+
+        {
+            xtype: 'button',
+            text: '編集',
+            itemId: 'editButton',
+            hidden: true,
+            align: 'right'
+        }
+        {
+            xtype: 'button',
+            text: '保存',
+            itemId: 'saveButton',
+            hidden: true,
+            align: 'right'
+        }
+
+* この二つのボタンは初期状態で「非表示」にしています。
+
+### ボタン表示のコントロール
+
+* Listビューが表示されたとき
+    * 追加ボタンを表示
+
+* Detailビューが表示されたとき
+    * 編集ボタンを表示
+
+* Editビューが表示されたとき
+    * 保存ボタンを表示
+
+* それぞれのビューのshow/hideイベントにリスナーをセットしてコントロールします。
+
+#### app/controller/List.js
+
+* refsにボタンを取得する定義をセット
+
+        addButton: 'button#addButton'
+
+* show/hideイベントリスナーをセット
+
+        control: {
+            contactlist: {
+                disclose: 'onDisclose',
+                show: 'onShow',  // 追加
+                hide: 'onHide'   // 追加
             }
-        });
+        }
 
-* フォームは`Ext.form.Panel`を継承して作ります。
-* `items`配列に入力フィールドを定義します。
-* `fieldset`は複数のフィールドをグループにまとめます。
-* `textfield`はテキストを入力できるフィールドです。
+* リスナーを書く
 
+        onShow: function() {
+            this.getAddButton().show();
+        },
 
+        onHide: function () {
+            this.getAddButton().hide();
+        }
 
-                }, {
-                    xtype: 'fieldset',
-                    items: [{
-                        xtype: 'datepickerfield',
-                        label: '誕生日',
-                        dateFormat: 'Y-m-d',
-                        name: 'dob',
-                        picker: {
-                            yearFrom: 1940
-                        }
-                    }, {
-                        xtype: 'selectfield',
-                        label: '性別',
-                        name: 'gender',
-                        options: [{
-                            text: '男', value: '男'
-                        }, {
-                            text: '女', value: '女'
-                        }],
-                        defaultPhonePickerConfig: {
-                            doneButton: {text: '完了'},
-                            cancelButton: {text: 'キャンセル'}
-                        }
-                    }]
-
-* `datepickerfield`は日付を入力できるフィールドです。
-* `selectfield`は候補の中から選択できるフィールドです。
-
-                }, {
-                    xtype: 'fieldset',
-                    items: [{
-                        xtype: 'emailfield',
-                        label: 'メール',
-                        name: 'email'
-                    }, {
-                        xtype: 'textfield',
-                        label: '携帯電話',
-                        component: {
-                            type: 'tel'
-                        },
-                        name: 'mobile_phone'
-                    }]
-
-* `emailfield`は、メールアドレスを入力するフィールドです。
-* 電話番号入力をする時には、電話番号用のtouch独自コントロールはないので
-  `component`コンフィグに`type: 'tel'`を指定してやります。
-* ビューができたら、NavigationViewの`requires`配列にこのビューも追加します。
-
-        requires: [
-            'ContactList.view.List',
-            'ContactList.view.Detail',
-            'ContactList.view.Edit'
-        ],
+#### app/controller/Edit.js
 
 

@@ -65,6 +65,7 @@ Listコントローラーを作って、
 
         sencha generate controller List
 
+* app/controller/List.js が作成されます。
 * コントローラーをapp.jsに登録します。
 
         controllers: [
@@ -73,13 +74,12 @@ Listコントローラーを作って、
 
 ### refs
 
+* app/controller/List.js を開きます。
 * `refs`に定義したコンポーネントには、`getFoo()`というゲッター関数が作られます。
 * `navi` - `xtype`での指定
-* `addButton` - `xtype`と`itemId`での指定
 
         refs: {
-            navi: 'contactnavi',
-            addButton: 'button#addButton'
+            navi: 'contactnavi'
         },
 
 ### control
