@@ -1,44 +1,48 @@
 ## NavigationView
 
-* NavigationViewを使って、Detailビューを表示するようにします。
+Sencha Touchには、スマートフォンらしいページ切り替えをするときにとても便利な、NavigationViewというコンポーネントがあります。
+このハンズオンでも、NavigationViewを使って、選択された人物の詳細情報を表示させることにします。
+まずは、パネルを表示させるところまでやります。
+
+## やってみよう #08
+
+> ※ 直前のハンズオンがうまくいかなかった方のために、ここまでの結果を用意しています。
+> [こちらからダウンロードして](http://sencha.sunvisor.net/devlove/cl06.zip)
+> ドキュメントルートのdevloveディレクトリの下に解凍してください。
+
+### Detailビューの作成
+
+* 選択されたデータの内容を表示させるためのビューを作ります。
+* ここでは、単にパネルだけのクラスを作ります。
+
+        Ext.define('ContactList.view.Detail', {
+
+            extend: 'Ext.Panel',
+
+            xtype: 'contactdetail',
+
+            config: {
+                styleHtmlContent: true,
+                html: 'Detail Panel'
+            }
+
+        });
+
+### NavigationViewの作成
+
 * Ext.navigation.Viewを継承したクラス、ContactList.view.Naviを作ります。
-* ヘッダーにボタンを3つ追加します。追加・編集・保存
-* ボタンの表示は追加以外は非表示にします
-* Requiresには配置する予定のビュークラス2つをセットします。
+* NavigationViewを使って、このDetailビューを表示するようにします。
 
         Ext.define('ContactList.view.Navi', {
             extend: 'Ext.navigation.View',
 
-            alias: 'widget.contactnavi',
+            xtype: 'contactnavi',
 
             requires: [
-                'ContactList.view.List',
-                'ContactList.view.Detail'
+                'ContactList.view.List'
             ],
 
             config: {
-                navigationBar: {
-                    items: [{
-                        xtype: 'button',
-                        text: '追加',
-                        itemId: 'addButton',
-                        hidden: false,
-                        align: 'right'
-                    }, {
-                        xtype: 'button',
-                        text: '編集',
-                        itemId: 'editButton',
-                        hidden: true,
-                        align: 'right'
-                    }, {
-                        xtype: 'button',
-                        text: '保存',
-                        itemId: 'saveButton',
-                        hidden: true,
-                        align: 'right'
-                    }]
-                },
-
                 items: [{
                     xtype: 'contactlist'
                 }]
@@ -51,4 +55,59 @@
 * itemsの一つ目の`xtype`を`contactlist`から`contactview`に変更します。
 * 表示してみるとcontactlistが表示されている状態になっています。　
 
+### コントローラー
 
+Listコントローラーを作って、
+このListで発火されたイベントを制御させ、
+ディスクロージャーがタップされたらが表示されるようにします。
+
+* Sencha Cmdでコントローラーを作成します。
+
+        sencha generate controller List
+
+* コントローラーをapp.jsに登録します。
+
+        controllers: [
+            'List'
+        ],
+
+### refs
+
+* `refs`に定義したコンポーネントには、`getFoo()`というゲッター関数が作られます。
+* `navi` - `xtype`での指定
+* `addButton` - `xtype`と`itemId`での指定
+
+        refs: {
+            navi: 'contactnavi',
+            addButton: 'button#addButton'
+        },
+
+### control
+
+* `control`では、コントロールのイベントとコントローラーメソッドを紐つけます。
+* `disclose`    - `onDesclose`
+
+        control: {
+            contactlist: {
+                disclose: 'onDisclose'
+            }
+        }
+
+### リスナー
+
+Detailパネルのインスタンスを作って、ナビゲーションに追加します。
+
+        onDisclose: function(list, record) {
+            var me = this,
+                detail = Ext.create('Contactlist.view.Detail');
+
+            me.getNavi().push(detail);
+        }
+
+
+### 動作確認
+
+* ブラウザで動作を確認します。
+* ディスクロージャーをタップするとパネルが表示されます。
+* パネルが表示された状態でBackボタンをタップすると元のリストに戻ります。
+* パネルの内容が空ですので、次にパネルにレコードを表示させます。
