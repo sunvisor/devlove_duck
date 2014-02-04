@@ -167,6 +167,13 @@ app.jsのlaunchメソッドの最後に1行追加して、Storeをロードし�
             autoPaging: true
         }]
 
+* プラグインのクラスをrequires配列に追加します。
+
+        requires: [
+            'ContactList.store.Contacts',
+            'Ext.plugin.ListPaging' // 追加
+        ],
+
 * 表示させ、最後までスクロールしてみるとLoad More...と表示され、新しいレコードが読み込まれるようになります。
 
 ### storeのsorters
