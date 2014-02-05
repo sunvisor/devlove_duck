@@ -187,10 +187,11 @@ Detailビューが表示されている時に、「編集」ボタンをタッ�
 
 * リスナーを追加
 
-        onSaveData: function() {
+        onTapSaveButton: function() {
             var me = this,
-                record = me.getEdit().getRecord(),
-                data = me.getEdit().getValues(),
+                edit = me.getEdit(),
+                record = edit.getRecord(),
+                data = edit.getValues(),
                 store = Ext.getStore('Contacts');
 
             record.set(data);
