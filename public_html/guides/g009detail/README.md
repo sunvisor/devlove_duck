@@ -81,7 +81,7 @@ html: 'Detail Panel'の代わりに次のテンプレートをセットします
 ### パネルへのデータのセット
 
 パネルに設定されたテンプレートにデータを適用させるには、setData() メソッドを使います。
-コントローラーのonDiscloseイベントリスナーを変更します。
+コントローラーの`onDisclose`イベントリスナーを変更します。
 
     onDisclose: function(list, record) {
         var me = this,
@@ -91,3 +91,7 @@ html: 'Detail Panel'の代わりに次のテンプレートをセットします
         detail.setRecord(record);
         me.getNavi().push(detail);
     }
+
+* ブラウザで表示してみて、ディスクロージャーをタップしてみます。
+* データが表示されたパネルが表示されることを確認してください。
+* このようにわずか1行でデータをパネルに反映することができました。

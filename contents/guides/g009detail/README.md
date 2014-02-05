@@ -81,7 +81,7 @@ html: 'Detail Panel'の代わりに次のテンプレートをセットします
 ### パネルへのデータのセット
 
 パネルに設定されたテンプレートにデータを適用させるには、setData() メソッドを使います。
-コントローラーのonDiscloseイベントリスナーを変更します。
+コントローラーの`onDisclose`イベントリスナーを変更します。
 
     onDisclose: function(list, record) {
         var me = this,

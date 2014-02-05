@@ -1,99 +1,235 @@
-## Editビュー
+# データの編集
 
-### やってみよう #10
+作ったフォームを使ってデータの編集をしてみましょう。
 
-※ 直前のハンズオンがうまくいかなかった方のために、ここまでの結果を用意しています。
-[こちらからダウンロードして](http://preview.xenophy.com/xenophy/senchaug/egg/misc/cl10.zip)
-ドキュメントルートのeggディレクトリの下に解凍してください。
+* 編集ボタン、保存ボタンをNavigationViewのツールバーに追加します。
+* 追加ボタン、編集ボタン、保存ボタンが状況に応じて表示されるようにコントロールします。
+* Detailビューが表示されている時に、「編集」ボタンをタップするとデータを編集できるようにします。
+* Editビューで保存ボタンをタップするとデータがStoreに保存されるようにします。
 
-Detailビューから「編集」ボタンが押された時、あるいはListビューから「新規」ボタンが押された時に表示するEditビューを作成します。
+## やってみよう #11
 
-        Ext.define('ContactList.view.Edit', {
-            extend: 'Ext.form.Panel',
+> ※ 直前のハンズオンがうまくいかなかった方のために、ここまでの結果を用意しています。
+> [こちらからダウンロードして](http://sencha.sunvisor.net/devlove/cl10.zip)
+> ドキュメントルートのdevloveディレクトリの下に解凍してください。
 
-            requires: [
-                'Ext.form.FieldSet',
-                'Ext.field.DatePicker',
-                'Ext.field.Email'
-            ],
-            
-            alias: 'widget.contactedit',
+### 手順
 
-            config: {
-                items: [{
-                    xtype: 'fieldset',
-                    items: [{
-                        xtype: 'textfield',
-                        label: '氏名',
-                        name: 'name'
-                    }, {
-                        xtype: 'textfield',
-                        label: 'ふりがな',
-                        name: 'name_kana'
-                    }]
-                }]
+* 編集／保存用のボタンをNaviビューに追加します。
+
+### 編集用ボタンの追加
+
+* 次の二つのオブジェクトをnavigationBarのitemsに追加します。
+
+        {
+            xtype: 'button',
+            text: '編集',
+            itemId: 'editButton',
+            hidden: true,
+            align: 'right'
+        }
+        {
+            xtype: 'button',
+            text: '保存',
+            itemId: 'saveButton',
+            hidden: true,
+            align: 'right'
+        }
+
+* この二つのボタンは初期状態で「非表示」にしています。
+
+### ボタン表示のコントロール
+
+* Listビューが表示されたとき
+    * 追加ボタンを表示
+
+* Detailビューが表示されたとき
+    * 編集ボタンを表示
+
+* Editビューが表示されたとき
+    * 保存ボタンを表示
+
+* それぞれのビューのshow/hideイベントにリスナーをセットしてコントロールします。
+
+#### app/controller/List.js
+
+* refsにボタンを取得する定義をセット
+
+        addButton: 'button#addButton'
+
+* show/hideイベントリスナーをセット
+
+        control: {
+            contactlist: {
+                disclose: 'onDisclose',
+                show: 'onShow',  // 追加
+                hide: 'onHide'   // 追加
             }
-        });
+        }
 
-* フォームは`Ext.form.Panel`を継承して作ります。
-* `items`配列に入力フィールドを定義します。
-* `fieldset`は複数のフィールドをグループにまとめます。
-* `textfield`はテキストを入力できるフィールドです。
+* リスナーを書く
 
+        onShow: function() {
+            this.getAddButton().show();
+        },
 
+        onHide: function () {
+            this.getAddButton().hide();
+        }
 
-                }, {
-                    xtype: 'fieldset',
-                    items: [{
-                        xtype: 'datepickerfield',
-                        label: '誕生日',
-                        dateFormat: 'Y-m-d',
-                        name: 'dob',
-                        picker: {
-                            yearFrom: 1940
-                        }
-                    }, {
-                        xtype: 'selectfield',
-                        label: '性別',
-                        name: 'gender',
-                        options: [{
-                            text: '男', value: '男'
-                        }, {
-                            text: '女', value: '女'
-                        }],
-                        defaultPhonePickerConfig: {
-                            doneButton: {text: '完了'},
-                            cancelButton: {text: 'キャンセル'}
-                        }
-                    }]
+#### app/controller/Detail.js
 
-* `datepickerfield`は日付を入力できるフィールドです。
-* `selectfield`は候補の中から選択できるフィールドです。
+* コントローラーの作成
 
-                }, {
-                    xtype: 'fieldset',
-                    items: [{
-                        xtype: 'emailfield',
-                        label: 'メール',
-                        name: 'email'
-                    }, {
-                        xtype: 'textfield',
-                        label: '携帯電話',
-                        component: {
-                            type: 'tel'
-                        },
-                        name: 'mobile_phone'
-                    }]
+        sencha generate controller Detail
 
-* `emailfield`は、メールアドレスを入力するフィールドです。
-* 電話番号入力をする時には、電話番号用のtouch独自コントロールはないので
-  `component`コンフィグに`type: 'tel'`を指定してやります。
-* ビューができたら、NavigationViewの`requires`配列にこのビューも追加します。
+* refsの定義
+
+        detail: 'contactdetail',
+        editButton: 'button#editButton'
+
+* controlの定義
+
+        detail : {
+            show: 'onShow',
+            hide: 'onHide'
+        }
+
+* リスナーを書く
+
+        onShow: function() {
+            me.getEditButton().show();
+        },
+
+        onHide: function () {
+            this.getEditButton().hide();
+        }
+
+#### app/controller/Edit.js
+
+* コントローラーの作成
+
+        sencha generate controller Edit
+
+* refsの定義
+
+        edit: 'contactedit',
+        saveButton: 'button#saveButton'
+
+* controlの定義
+
+        edit : {
+            show: 'onShow',
+            hide: 'onHide'
+        }
+
+* リスナーを書く
+
+        onShow: function() {
+            this.getSaveButton().show();
+        },
+
+        onHide: function () {
+            this.getSaveButton().hide();
+        }
+
+### 編集の実現
+
+Detailビューが表示されている時に、「編集」ボタンをタップするとデータを編集できるようにします。
+「編集」ボタンはNaviビューにあるので、Naviコントローラーにリスナーを設定する事にします。
+
+* refsに追加
+
+        editButton: 'button#editButton'
+
+* controlに追加
+
+        editButton: {
+            tap: 'onTapEditButton'
+        }
+
+* リスナーを追加します。Editビューを表示するとともに、フォームにデータを設定します。
+
+        onTapEditButton: function() {
+            var me = this,
+                record = me.getDetail().getRecord(),
+                edit = Ext.create('ContactList.view.Edit');
+
+            edit.setRecord(record);
+            me.getNavi().push(edit);
+        }
+
+* レコードは、Detailビューの`getRecord()`メソッドで取得しています。
+* そのデータを生成したEditビューの`setRecord()`メソッドで設定しています。
+* これだけで、フォームにデータをロードすることができます。
+
+* このリスナーで生成しているビューを`requires`に追加
 
         requires: [
-            'ContactList.view.List',
-            'ContactList.view.Detail',
             'ContactList.view.Edit'
-        ],
+        ]
 
+* 実行してみましょう。Detailビューが表示されているときに、編集ボタンをタップすると、フォームにそのデータが表示されます。
 
+### 保存処理
+
+保存処理は、Editコントローラーに書いていきます。
+
+* refsに追加
+
+        navi: 'contactnavi',
+
+* controlに追加
+
+        saveButton: {
+            tap: 'onSaveData'
+        }
+
+* リスナーを追加
+
+        onSaveData: function() {
+            var me = this,
+                record = me.getEdit().getRecord(),
+                data = me.getEdit().getValues(),
+                store = Ext.getStore('Contacts');
+
+            record.set(data);
+            me.getNavi().pop();
+        }
+
+* 実行して、フォームの保存ボタンをタップして、実際にデータが一覧に保存されていることを確認します。
+* ここでは、ローカルのStoreに保存されただけで、サーバー上のデータは変更されていません。
+
+### データの追加
+
+データの追加も実装しましょう。
+
+* Listビューが表示されているときに、「新規」ボタンをタップするとデータを追加できるようにします。
+* 追加ボタンでEditビューが追加されますが、保存ボタンをタップしたときに新規追加されるようにします。
+
+#### リスナーを変更
+
+やってみよう#10 で作った`onTapAddButton`リスナーを変更します。
+
+    onTapAddButton: function() {
+        var me = this,
+            record = Ext.create('ContactList.model.Contact'),   // 追加 *1
+            form = Ext.create('ContactList.view.Edit');
+
+        form.setRecord(record);         // 追加 *2
+        me.getNavi().push(form);
+    },
+
+* 新しいModelのインスタンスを生成(*1)して
+* Formにセットしています(*2)
+
+#### 保存処理の変更（更新時と追加時）
+
+* `onTapSaveButton`リスナーの`record.set(data);`の直後に次のコードを追加します。
+
+        if( record.phantom ) {
+            store.add(record);
+        }
+
+* これはModelが新しいものだったら、Storeに追加するという処理です。
+* `phantom` プロパティはModelのidが確定していない場合に`true`になります。

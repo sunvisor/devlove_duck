@@ -34,14 +34,11 @@
         "title": "Formの作成",
         "name": "g010form"
     }, {
-        "title": "Listコントローラー",
-        "name": "g010listcontroller"
-    }, {
-        "title": "Editビュー",
+        "title": "データの編集",
         "name": "g011edit"
     }, {
-        "title": "Detailコントローラー",
-        "name": "g012detailcontroller"
+        "title": "データの保存",
+        "name": "g012save"
     }, {
         "title": "Editコントローラー",
         "name": "g013editcontroller"
