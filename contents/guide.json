@@ -2,55 +2,55 @@
     "title": "DevLove関西 - 「Sencha Touch」でHTML5を使ったモバイル向けWebアプリケーションを作ってみませんか？",
     "items": [{
         "title": "準備",
-        "name": "g000intro"
+        "name": "g0000intro"
     }, {
         "title": "ワークスペースの作成",
-        "name": "g001workspace"
+        "name": "g0010workspace"
     }, {
         "title": "アプリケーションの作成",
-        "name": "g002app"
+        "name": "g0020app"
     }, {
         "title": "クラスシステムについて",
-        "name": "g003classsystem"
+        "name": "g0030classsystem"
     }, {
         "title": "MVCアーキテクチャについて",
-        "name": "g004mvc"
+        "name": "g0040mvc"
     }, {
         "title": "モデルを作る",
-        "name": "g005model"
+        "name": "g0050model"
     }, {
         "title": "Proxyを設定する",
-        "name": "g006proxy"
+        "name": "g0060proxy"
     }, {
         "title": "Listビューの作成",
-        "name": "g007list"
+        "name": "g0070list"
+    }, {
+        "title": "Listビューのソート",
+        "name": "g0075sort"
     }, {
         "title": "NavigationView",
-        "name": "g008navi"
+        "name": "g0080navi"
     }, {
         "title": "Detailビューの作成",
-        "name": "g009detail"
+        "name": "g0090detail"
     }, {
         "title": "Formの作成",
-        "name": "g010form"
+        "name": "g0100form"
     }, {
         "title": "データの編集",
-        "name": "g011edit"
+        "name": "g0110edit"
     }, {
         "title": "データの保存",
-        "name": "g012save"
-    }, {
-        "title": "Editコントローラー",
-        "name": "g013editcontroller"
-    }, {
-        "title": "表示の調整",
-        "name": "g014japan"
+        "name": "g0120save"
     }, {
         "title": "ビルド",
-        "name": "g015build"
+        "name": "g0130build"
     }, {
-        "title": "Appendix",
-        "name": "g016appendix"
+        "title": "表示の調整",
+        "name": "g0140japan"
+    }, {
+        "title": "テーマ",
+        "name": "g1010theme"
     }]
 }]
 

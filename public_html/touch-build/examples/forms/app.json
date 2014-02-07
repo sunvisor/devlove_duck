@@ -112,8 +112,7 @@
     "extras": [
         "resources/images",
         "resources/icons",
-        "resources/loading",
-        "user.json"
+        "resources/loading"
     ],
 
     /**
